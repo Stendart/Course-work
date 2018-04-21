@@ -65,6 +65,7 @@ class fillingMap
 	createElement(Map,posX,posY)
 	{
 		Map.skin = document.createElement('div');
+		Map.skin.className = "map";
 		Map.skin.style.width = Map.skin.style.height = 5 + "%";
 		//this.skin.style.height = 40 + "px";
 		Map.skin.style.position= "absolute";
@@ -77,16 +78,46 @@ class fillingMap
 		this.addToArray(Map);
 	}
 
-	generateMap(kol)
+	generateMap()
 	{
-		var sceen = document.getElementById("scen");
+		var sceen = document.getElementById("scen").offsetWidth;  //получение ширины ДИВа
+		var sceenHeight = document.getElementById("scen").offsetHeight;	//получение высоты ДИВа
+
 		var x = 10;
-		console.log();
-		for(var i=0; i<kol; i++)
+		var y = 10;
+		var chekLine = 1;
+		var checColumn = 1;
+
+		this.createElement(new mapMountain(), x, y);
+
+		var widthSceen = document.getElementsByClassName("map")[0].clientWidth;	//размер ширины квадрата карты
+		var countSceen = sceen / widthSceen
+
+
+		var heightSceen = document.getElementsByClassName("map")[0].clientHeight;
+		var countHeightSceen = sceenHeight / heightSceen;		//подсчет кол-ва квадратов в высоту
+ console.log(countHeightSceen);
+		for(var i=0; i<1000; i++)
 		{
-			this.createElement(new mapMountain(), x, 100);
-			x+=45;
+			x+=widthSceen;
+			if(chekLine >= Math.floor(countSceen))
+				{
+					if(y+heightSceen > sceenHeight)
+						break;
+					y+=heightSceen;
+					chekLine = 0;
+					x = 10;
+				}
+
+				
+
+			this.createElement(new mapMountain(), x, y);
+			
+			chekLine++;
 		}
+		
+		console.log(y);
+		console.log(sceenHeight);
 	}
 
 }
@@ -95,7 +126,7 @@ m = new fillingMap();
 mount = new mapMountain();
 
 //m.createElement(mount);
-m.generateMap(5);
+m.generateMap();
 
 
 
