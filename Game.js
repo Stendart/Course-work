@@ -45,22 +45,48 @@ class mapPlain extends Map
 
 
 
+
+
 class fillingMap
 {
-	createElement(Map)
+	constructor()
+	{
+		this.mas = [];
+		this.mapCount = 0;
+	}
+
+	addToArray(mapSection)
+	{
+		this.mas[this.mapCount] = mapSection;
+		this.mapCount++;
+	}
+
+
+	createElement(Map,posX,posY)
 	{
 		Map.skin = document.createElement('div');
-		Map.skin.style.width = Map.skin.style.height = 70 + "px";
+		Map.skin.style.width = Map.skin.style.height = 5 + "%";
 		//this.skin.style.height = 40 + "px";
 		Map.skin.style.position= "absolute";
-		Map.skin.style.left= 200 + "px";//this.posX + "px";
-		Map.skin.style.top= 100 + "px";//this.posY + "px";
+		Map.skin.style.left= posX + "px";//this.posX + "px";
+		Map.skin.style.top= posY + "px";//this.posY + "px";
 		document.body.appendChild(Map.skin);
 		Map.skin.style.backgroundImage = "url(" + Map.image + ")";//Map.image;
 		Map.skin.style.backgroundPosition = "-10px -10px";
-		//background-position:-100px -100px
 
-		
+		this.addToArray(Map);
+	}
+
+	generateMap(kol)
+	{
+		var sceen = document.getElementById("scen");
+		var x = 10;
+		console.log();
+		for(var i=0; i<kol; i++)
+		{
+			this.createElement(new mapMountain(), x, 100);
+			x+=45;
+		}
 	}
 
 }
@@ -68,7 +94,8 @@ class fillingMap
 m = new fillingMap();
 mount = new mapMountain();
 
-m.createElement(mount);
+//m.createElement(mount);
+m.generateMap(5);
 
 
 
