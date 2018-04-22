@@ -8,6 +8,8 @@ class Map {
 
         this.i = i;
         this.j = j;
+
+        this.onclick = this.onclick.bind(this);
     }
 
     onclick(e){
@@ -33,8 +35,8 @@ class MapMountain extends Map {
 }
 
 class MapForest extends Map {
-    constructor() {
-        super();
+    constructor(i, j) {
+        super(i, j);
         this.protectionBonus = 5;
         this.pointOnStep = 5;
         this.image = "Forest.png";
@@ -42,8 +44,8 @@ class MapForest extends Map {
 }
 
 class MapPlain extends Map {
-    constructor() {
-        super();
+    constructor(i, j) {
+        super(i, j);
         this.protectionBonus = 0;
         this.pointOnStep = 1;
         this.image = "005.png";
@@ -58,10 +60,6 @@ class FillingMap {
     addToArray(mapSection) {
         this.mas.push(mapSection);
     }
-
-   // onclick(){
-   //     console.log(this.mas[i][j]);
-    //}
 
     createElement(Map, container) {
         Map.skin = document.createElement('DIV');
@@ -99,23 +97,83 @@ class FillingMap {
         }
         //console.log(this.mas)
     }
+}
 
 
-    event(){
+class Robot{
+    constructor(){
+        this.HP;
+        this.damage;
+        this.def;
+        this.skin;
+        this.pointAction;
+
+        this.posX;
+        this.posY;
+    }
+
+    move(){
+
+    }
+
+    upgrade(){
+
+    }
+
+    onclick(){
+        console.log("This is a robot");
+    }
+}
+
+
+class feavyRobot extends Robot{
+    constructor(posX, posY){
+        super();
+        this.HP = 100;
+        this.damage = 25;
+        this.def = 30;
+        this.skin = "robot.png";
+        this.pointAction = 10;
+
+        this.posX = posX;
+        this.posY = posY;
+    }
+}
+
+
+class wrapperRobot{
+    constructor(){
+
+    }
+
+    renderRobot(r){
+        r.skin = document.createElement('DIV');
+        r.skin.className = 'robot';
         
+        //container.appendChild(Map.skin);
+
+        r.skin.style.left = r.posX + "px";
+        r.skin.style.top = r.posY + "px";
+        r.skin.style.width = 100 + "px";
+        r.skin.style.height = 100 + "px";
+        r.skin.style.position= "absolute";
+        r.skin.style.backgroundImage = "url(" + r.skin + ")";
+
+        screen.appendChild(r.skin);
+
+        r.skin.onclick = r.onclick;
     }
 
 
 }
 
 m = new FillingMap();
-
 m.generateMap();
 
-let ev = document.getElementsByClassName("tileCell");
-console.log(ev[0]);
-        ev[0].click = new function(){
-            console.log("Event working!");
-        }
+r = new wrapperRobot();
+r.renderRobot(new feavyRobot(100, 100));
+
+
+
 
 
