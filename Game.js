@@ -1,11 +1,10 @@
+const screen = document.getElementById("scene");
+
 class Map {
     constructor() {
         this.protectionBonus;
         this.pointOnStep;
         this.image;
-
-        this.x;	//X - координата отрисовки отдельного спрайта карты
-        this.y;
     }
 }
 
@@ -20,7 +19,7 @@ class MapMountain extends Map {
 
 class MapForest extends Map {
     constructor() {
-        super(x, y);
+        super();
         this.protectionBonus = 5;
         this.pointOnStep = 5;
         this.image = "Forest.png";
@@ -29,98 +28,96 @@ class MapForest extends Map {
 
 class MapPlain extends Map {
     constructor() {
-        super(x, y);
+        super();
         this.protectionBonus = 0;
         this.pointOnStep = 1;
-        this.image = "Plain.png";
+        this.image = "005.png";
     }
 }
 
 class FillingMap {
     constructor() {
         this.mas = [];
-        this.mapCount = 0;
+
     }
 
     addToArray(mapSection) {
-        this.mas[this.mapCount] = mapSection;
-        this.mapCount++;
+        this.mas.push(mapSection);
     }
 
 
-    createElement(Map, posX, posY) {
-        Map.skin = document.createElement('div');
-        Map.skin.className = "map";
-        Map.skin.style.width = Map.skin.style.height = 5 + "%";
-        //this.skin.style.height = 40 + "px";
-        Map.skin.style.position = "absolute";
-        Map.skin.style.left = posX + "px";//this.posX + "px";
-        Map.skin.style.top = posY + "px";//this.posY + "px";
-        document.body.appendChild(Map.skin);
-        Map.skin.style.backgroundImage = "url(" + Map.image + ")";//Map.image;
-        Map.skin.style.backgroundSize = "100% 100%";
-        //Map.skin.style.backgroundPosition = "-10px -10px";
+    createElement(Map, container) {
 
-        Map.x = posX;	//Координаты отрисовки конкретного спрайта
-        Map.y = posY;
 
-        this.addToArray(Map);
+
+        Map.skin = document.createElement('DIV');
+        Map.skin.className = 'tileCell';
+        Map.skin.style.backgroundImage = "url(" + Map.image + ")"; // Map.image;
+        container.appendChild(Map.skin);
+        //this.addToArray(Map);
+        return Map;
     }
 
     generateMap() {
-        const screen = document.getElementById("scene").offsetWidth;  // получение ширины ДИВа
-        const screenHeight = document.getElementById("scene").offsetHeight;	// получение высоты ДИВа
+        //const screen = document.getElementById("scene");
 
-        let x = 10;
-        let y = 10;
-        let checkLine = 1;
-        let checColumn = 1;
+        for (let i = 0; i < 20; i++) {
+            let row = document.createElement('DIV');
+            row = document.createElement('DIV');
+            row.className = 'tilesRow';
+            screen.appendChild(row);
 
-        this.createElement(new MapPlain(), x, y);
+            this.mas[i] = [];
 
-        const widthScreen = document.getElementsByClassName("map")[0].clientWidth;	// размер ширины квадрата карты
-        const countScreen = screen / widthScreen;
+            for (let j = 0; j < 10; j++) {
+                let random = Math.random();
+                if(random > 0.9){
+                    this.mas[i][j] = this.createElement(new MapMountain(), row);
+                }else if(random < 0.1){
+                    this.mas[i][j] = this.createElement(new MapForest(), row);
+                }else
+                this.mas[i][j] = this.createElement(new MapPlain(), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)   
 
-        const heightScreen = document.getElementsByClassName("map")[0].clientHeight;
-        //const countHeightScreen = screenHeight / heightScreen; // подсчет кол-ва квадратов в высоту
-        for (let i = 0; i < 1000; i++) {
-            x += widthScreen;
-            if (checkLine >= Math.floor(countScreen)) {
-                if (y + heightScreen > screenHeight)
-                    break;
-                y += heightScreen;
-                checkLine = 0;
-                x = 10;
+                console.log(random);
             }
-
-            this.createElement(new MapPlain(), x, y);
-            checkLine++;
         }
-
-        console.log(y);
-        console.log(screenHeight);
+        console.log(this.mas)
     }
 
-    generateMap2(){			// Метод в разработке!
-    	this.mas.forEach((i,el)=>{
 
-    		console.log("i = "+i + "el = " + el)
+    randomGenerate(){
+       /* this.mas.forEach((el,i)=>{
+            
+            if(Math.random() > 0.9){
+                console.log(i);
+            }
+            //console.log("el " + el + "i "+i);
+        })*/
+        //console.log(this.mas[0].length);
+        for(let i = 0; i < this.mas.length; i++){
 
-    		if(Math.random > 0.7){
+            for(let j = 0; j < this.mas[i].length; j++){
+                if(Math.random() > 0.9){
+                    
 
-    			this.createElement(new MapForest(), i.x, i.y);
-    		}
-    	});
+                    this.mas[i][j] = this.createElement(new MapMountain(), row);
+                    console.log(this.mas[i][j])
+                }
+                
+            
+            }
+        }
     }
+
+
 }
 
 m = new FillingMap();
-//mount = new MapPlain();
+//mount = new MapMountain();
 
 //m.createElement(mount);
 m.generateMap();
-m.generateMap2();
-
+//m.randomGenerate();
 
 /*
 this.skin = document.createElement('div');
