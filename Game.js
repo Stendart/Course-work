@@ -1,19 +1,34 @@
 const screen = document.getElementById("scene");
 
 class Map {
-    constructor() {
+    constructor(i,j) {
         this.protectionBonus;
         this.pointOnStep;
         this.image;
+
+        this.i = i;
+        this.j = j;
+    }
+
+    onclick(e){
+        console.clear()
+        //console.log("Click", e);
+        console.log(this.i + " j: "+ this.j);
+        //this.
     }
 }
 
 class MapMountain extends Map {
-    constructor() {
-        super();
+    constructor(i, j) {
+        super(i, j);
         this.protectionBonus = 20;
         this.pointOnStep = 10;
         this.image = "Mountain.png";
+    }
+
+    onclick(){
+        super.onclick();
+        console.log("This mountain" + " i: "+this.i + " j: "+this.j);
     }
 }
 
@@ -38,23 +53,24 @@ class MapPlain extends Map {
 class FillingMap {
     constructor() {
         this.mas = [];
-
     }
 
     addToArray(mapSection) {
         this.mas.push(mapSection);
     }
 
+   // onclick(){
+   //     console.log(this.mas[i][j]);
+    //}
 
     createElement(Map, container) {
-
-
-
         Map.skin = document.createElement('DIV');
         Map.skin.className = 'tileCell';
-        Map.skin.style.backgroundImage = "url(" + Map.image + ")"; // Map.image;
+        Map.skin.style.backgroundImage = "url(" + Map.image + ")";
         container.appendChild(Map.skin);
-        //this.addToArray(Map);
+
+        Map.skin.onclick = Map.onclick;
+
         return Map;
     }
 
@@ -72,66 +88,34 @@ class FillingMap {
             for (let j = 0; j < 10; j++) {
                 let random = Math.random();
                 if(random > 0.9){
-                    this.mas[i][j] = this.createElement(new MapMountain(), row);
+                    this.mas[i][j] = this.createElement(new MapMountain(i, j), row);
                 }else if(random < 0.1){
-                    this.mas[i][j] = this.createElement(new MapForest(), row);
+                    this.mas[i][j] = this.createElement(new MapForest(i,j), row);
                 }else
-                this.mas[i][j] = this.createElement(new MapPlain(), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)   
+                this.mas[i][j] = this.createElement(new MapPlain(i,j), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)   
 
-                console.log(random);
+                //console.log(random);
             }
         }
-        console.log(this.mas)
+        //console.log(this.mas)
     }
 
 
-    randomGenerate(){
-       /* this.mas.forEach((el,i)=>{
-            
-            if(Math.random() > 0.9){
-                console.log(i);
-            }
-            //console.log("el " + el + "i "+i);
-        })*/
-        //console.log(this.mas[0].length);
-        for(let i = 0; i < this.mas.length; i++){
-
-            for(let j = 0; j < this.mas[i].length; j++){
-                if(Math.random() > 0.9){
-                    
-
-                    this.mas[i][j] = this.createElement(new MapMountain(), row);
-                    console.log(this.mas[i][j])
-                }
-                
-            
-            }
-        }
+    event(){
+        
     }
 
 
 }
 
 m = new FillingMap();
-//mount = new MapMountain();
 
-//m.createElement(mount);
 m.generateMap();
-//m.randomGenerate();
 
-/*
-this.skin = document.createElement('div');
-this.skin.style.width = this.skin.style.height = (Math.random()*(50-10+1))+10 + "px";
-// this.skin.style.height = 40 + "px";
-this.skin.style.position= "absolute";
-this.skin.style.left= this.posX + "px";
-this.skin.style.top= this.posY + "px";
-document.body.appendChild(this.skin);
-this.skin.style.backgroundImage = [
-    "url(http://galerey-room.ru/images_thumb/093225_1419402745.png)",
-    "url(http://galerey-room.ru/images_thumb/093119_1419402679.png)",
-    "url(http://galerey-room.ru/images_thumb/093242_1419402762.png)"
-][
-    Math.floor(Math.random()*2)
-]
-*/
+let ev = document.getElementsByClassName("tileCell");
+console.log(ev[0]);
+        ev[0].click = new function(){
+            console.log("Event working!");
+        }
+
+
