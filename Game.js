@@ -1,5 +1,6 @@
 const screen = document.getElementById("scene");
 
+
 class Map {
     constructor(i,j) {
         this.protectionBonus;
@@ -17,7 +18,10 @@ class Map {
         //console.log("Click", e);
         console.log(this.i + " j: "+ this.j);
         //this.
+        dto.transfer(this.i, this.j); //=======================================
     }
+
+   
 }
 
 class MapMountain extends Map {
@@ -100,6 +104,45 @@ class FillingMap {
 }
 
 
+
+class DTO{      //Сделать Синглтоном
+    constructor(){
+        //this.ob;
+    }
+
+     transfer(I, J){
+        //console.log("Hi " + document.getElementsByClassName("tileCell")[0].clientWidth);
+        const widthScreen = document.getElementsByClassName("tileCell")[0].clientWidth;
+        const heightScreen = document.getElementsByClassName("tileCell")[0].clientHeight;
+        let i = I;
+        let j = J;
+
+        
+        this.rob.pX = widthScreen * j;
+        this.rob.pY = heightScreen * i;
+        //return ob
+        this.moveRob();
+    }
+
+    collectRobotInfo(robot){
+        this.rob = robot;
+    }
+
+    moveRob(){
+        this.rob.posX = this.rob.pX;
+        this.rob.posY = this.rob.pY;
+
+console.log("this.rob = "+ this.rob);
+        this.rob.skin.style.left = this.rob.posX + "px";
+        this.rob.skin.style.top = this.rob.posY + "px";
+
+        
+    }
+}
+
+dto = new DTO();
+
+
 class Robot{
     constructor(){
         this.HP;
@@ -110,10 +153,16 @@ class Robot{
 
         this.posX;
         this.posY;
+
+        this.stepWidth = document.getElementsByClassName("tileCell")[0].clientWidth;        //Ширины и высота квадратика текстурки
+        this.stepHeight = document.getElementsByClassName("tileCell")[0].clientHeight;
+
+        this.onclick = this.onclick.bind(this); // Правильно ли сделал?
     }
 
     move(){
-
+        this.posX +=this.stepWidth;
+        this.skin.style.left = this.posX + "px";
     }
 
     upgrade(){
@@ -121,7 +170,15 @@ class Robot{
     }
 
     onclick(){
-        console.log("This is a robot");
+        console.log("This is a robot " );
+        //this.move();        
+        //this.saveRobot(this);
+        dto.collectRobotInfo(this);
+    }
+
+    saveRobot(rob){
+        let saveRob = rob;  //объект робот для передачи в метод движения по клику
+        console.log("saveRob: " + saveRob);
     }
 }
 
@@ -132,7 +189,7 @@ class feavyRobot extends Robot{
         this.HP = 100;
         this.damage = 25;
         this.def = 30;
-        this.skin = "robot.png";
+        this.sprite = "robot.png";
         this.pointAction = 10;
 
         this.posX = posX;
@@ -154,18 +211,20 @@ class wrapperRobot{
 
         r.skin.style.left = r.posX + "px";
         r.skin.style.top = r.posY + "px";
-        r.skin.style.width = 100 + "px";
-        r.skin.style.height = 100 + "px";
+        r.skin.style.width = 50 + "px";
+        r.skin.style.height = 50 + "px";
         r.skin.style.position= "absolute";
-        r.skin.style.backgroundImage = "url(" + r.skin + ")";
+        r.skin.style.backgroundImage = "url(" + r.sprite + ")";
 
         screen.appendChild(r.skin);
-
+        console.log(r.stepWidth);
+        console.log(r.stepHeight);
         r.skin.onclick = r.onclick;
     }
 
 
 }
+
 
 m = new FillingMap();
 m.generateMap();
@@ -177,3 +236,4 @@ r.renderRobot(new feavyRobot(100, 100));
 
 
 
+//const widthScreen = document.getElementsByClassName("map")[0].clientWidth;
