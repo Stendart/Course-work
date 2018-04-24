@@ -29,7 +29,7 @@ class MapMountain extends Map {
         super(i, j);
         this.protectionBonus = 20;
         this.pointOnStep = 10;
-        this.image = "Mountain.png";
+        this.image = "Mountain.jpg";
     }
 
     onclick(){
@@ -43,7 +43,7 @@ class MapForest extends Map {
         super(i, j);
         this.protectionBonus = 5;
         this.pointOnStep = 5;
-        this.image = "Forest.png";
+        this.image = "Forest.jpg";
     }
 }
 
@@ -52,7 +52,7 @@ class MapPlain extends Map {
         super(i, j);
         this.protectionBonus = 0;
         this.pointOnStep = 1;
-        this.image = "005.png";
+        this.image = "Plain.jpg";
     }
 }
 
@@ -108,33 +108,35 @@ class FillingMap {
 class DTO{      //Сделать Синглтоном
     constructor(){
         //this.ob;
+        this.currentSelectedUnit; //id юнита
     }
 
      transfer(I, J){
         //console.log("Hi " + document.getElementsByClassName("tileCell")[0].clientWidth);
         const widthScreen = document.getElementsByClassName("tileCell")[0].clientWidth;
         const heightScreen = document.getElementsByClassName("tileCell")[0].clientHeight;
-        let i = I;
-        let j = J;
+        //let i = I;
+        //let j = J;
 
         
-        this.rob.pX = widthScreen * j;
-        this.rob.pY = heightScreen * i;
+        this.rob.pX = widthScreen * J;    //получаем координаты нового нахождения робота
+        this.rob.pY = heightScreen * I;   //умножая ширину/высоту клетки на её номер в строке/столбце ()
         //return ob
         this.moveRob();
     }
 
     collectRobotInfo(robot){
         this.rob = robot;
+        console.log("ID= " + this.rob.id);
     }
 
     moveRob(){
-        this.rob.posX = this.rob.pX;
-        this.rob.posY = this.rob.pY;
+       // this.rob.posX = this.rob.pX;
+       // this.rob.posY = this.rob.pY;
 
 console.log("this.rob = "+ this.rob);
-        this.rob.skin.style.left = this.rob.posX + "px";
-        this.rob.skin.style.top = this.rob.posY + "px";
+        this.rob.skin.style.left = this.rob.pX + "px";
+        this.rob.skin.style.top = this.rob.pY + "px";
 
         
     }
@@ -144,7 +146,7 @@ dto = new DTO();
 
 
 class Robot{
-    constructor(){
+    constructor(id){
         this.HP;
         this.damage;
         this.def;
@@ -153,6 +155,10 @@ class Robot{
 
         this.posX;
         this.posY;
+
+
+        this.id = id;
+
 
         this.stepWidth = document.getElementsByClassName("tileCell")[0].clientWidth;        //Ширины и высота квадратика текстурки
         this.stepHeight = document.getElementsByClassName("tileCell")[0].clientHeight;
@@ -184,8 +190,8 @@ class Robot{
 
 
 class feavyRobot extends Robot{
-    constructor(posX, posY){
-        super();
+    constructor(posX, posY, id){
+        super(id);
         this.HP = 100;
         this.damage = 25;
         this.def = 30;
@@ -198,7 +204,7 @@ class feavyRobot extends Robot{
 }
 
 
-class wrapperRobot{
+class wrapperRobot{             // Стоит ли так оставлять класс? Или метод генерации лучше в Робота перенести?
     constructor(){
 
     }
@@ -216,12 +222,13 @@ class wrapperRobot{
         r.skin.style.position= "absolute";
         r.skin.style.backgroundImage = "url(" + r.sprite + ")";
 
+
+
         screen.appendChild(r.skin);
         console.log(r.stepWidth);
         console.log(r.stepHeight);
         r.skin.onclick = r.onclick;
     }
-
 
 }
 
@@ -230,7 +237,10 @@ m = new FillingMap();
 m.generateMap();
 
 r = new wrapperRobot();
-r.renderRobot(new feavyRobot(100, 100));
+r.renderRobot(new feavyRobot(100, 100, 20));
+
+//r2 = new wrapperRobot();
+//r2.renderRobot(new feavyRobot(400, 200, 10));
 
 
 
