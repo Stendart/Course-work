@@ -29,4 +29,8 @@ div{
 }
 .robot:hover { 
 filter: drop-shadow(0px 0px 3px #ff0); 
+/*filter: brightness(120%);*/
+}
+.selected{
+	filter: drop-shadow(10px 10px 30px #f00);
 }

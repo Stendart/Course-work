@@ -134,10 +134,9 @@ class DTO{      //Сделать Синглтоном
        // this.rob.posX = this.rob.pX;
        // this.rob.posY = this.rob.pY;
 
-console.log("this.rob = "+ this.rob);
+        console.log("this.rob = "+ this.rob);
         this.rob.skin.style.left = this.rob.pX + "px";
         this.rob.skin.style.top = this.rob.pY + "px";
-
         
     }
 }
@@ -156,7 +155,6 @@ class Robot{
         this.posX;
         this.posY;
 
-
         this.id = id;
 
 
@@ -166,26 +164,37 @@ class Robot{
         this.onclick = this.onclick.bind(this); // Правильно ли сделал?
     }
 
+
     move(){
         this.posX +=this.stepWidth;
         this.skin.style.left = this.posX + "px";
     }
 
-    upgrade(){
-
-    }
 
     onclick(){
-        console.log("This is a robot " );
+        console.log("This is a robot " + this.skin.classList );
         //this.move();        
         //this.saveRobot(this);
+        this.skin.classList.add("selected");
+       // this.skin.classList.remove("selected");
         dto.collectRobotInfo(this);
+
+
+
+
+
+       /* if(this.skin.selected == true){
+            console.log("Select!!!");
+        }*/
+        //this.skin.classList.remove("selected");
     }
 
-    saveRobot(rob){
+    saveRobot(rob){     //=================================ВОЗМОЖНО, НЕ ИСПОЛЬЗУЕТСЯ====================
         let saveRob = rob;  //объект робот для передачи в метод движения по клику
         console.log("saveRob: " + saveRob);
     }
+
+
 }
 
 
@@ -205,8 +214,9 @@ class feavyRobot extends Robot{
 
 
 class wrapperRobot{             // Стоит ли так оставлять класс? Или метод генерации лучше в Робота перенести?
-    constructor(){
-
+    constructor(r){
+        this.renderRobot(r);
+        this.ob = r;
     }
 
     renderRobot(r){
@@ -222,22 +232,57 @@ class wrapperRobot{             // Стоит ли так оставлять к�
         r.skin.style.position= "absolute";
         r.skin.style.backgroundImage = "url(" + r.sprite + ")";
 
-
-
         screen.appendChild(r.skin);
         console.log(r.stepWidth);
         console.log(r.stepHeight);
-        r.skin.onclick = r.onclick;
+        r.skin.onclick = r.onclick;         //Стоит ли так оставлять?
     }
 
+    getRobot(){
+        return this.ob;
+    }
+
+}
+
+class army{
+    constructor(){
+        this.mas = [];    //ToDo
+        this.IdGenerator = 0;
+        //console.log("Массив " + this.mas);
+    }
+
+    createArmy(){
+        for(this.IdGenerator; this.IdGenerator < 3; this.IdGenerator++){     //Сделать более осмысленный способ задания кол-ва роботов
+
+            this.mas[this.IdGenerator] = new wrapperRobot(new feavyRobot(100, 100, this.IdGenerator));
+            console.log("Проход " + this.IdGenerator);
+            console.log("Проход генератора " + this.mas[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
+            this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
+            //this.mas[this.IdGenerator]
+
+        }
+    }
+
+    onclick(){
+        console.log("New click!!!");
+    }
+       /* console.log("Test in method");
+        this.mas.forEach((el, i) =>{
+            this.mas[i] = new wrapperRobot(new feavyRobot(100, 100, this.IdGenerator));
+            this.IdGenerator++;
+            console.log("Проход " + i);
+        })*/
 }
 
 
 m = new FillingMap();
 m.generateMap();
 
-r = new wrapperRobot();
-r.renderRobot(new feavyRobot(100, 100, 20));
+//r = new wrapperRobot(new feavyRobot(100, 100, 20));
+//r.renderRobot(new feavyRobot(100, 100, 20));
+
+create = new army();
+create.createArmy();
 
 //r2 = new wrapperRobot();
 //r2.renderRobot(new feavyRobot(400, 200, 10));
