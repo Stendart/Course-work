@@ -172,16 +172,17 @@ class Robot{
 
 
     onclick(){
+
+        create.mas.forEach((el,i)=>{
+            console.log("Цикл " + el)
+            el.getRobot().skin.classList.remove("selected");
+        })
         console.log("This is a robot " + this.skin.classList );
         //this.move();        
         //this.saveRobot(this);
         this.skin.classList.add("selected");
        // this.skin.classList.remove("selected");
         dto.collectRobotInfo(this);
-
-
-
-
 
        /* if(this.skin.selected == true){
             console.log("Select!!!");
@@ -257,7 +258,7 @@ class army{
             this.mas[this.IdGenerator] = new wrapperRobot(new feavyRobot(100, 100, this.IdGenerator));
             console.log("Проход " + this.IdGenerator);
             console.log("Проход генератора " + this.mas[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
-            this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
+            //this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
             //this.mas[this.IdGenerator]
 
         }
