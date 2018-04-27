@@ -17,11 +17,8 @@ class Map {
         console.clear()
         //console.log("Click", e);
         console.log(this.i + " j: "+ this.j);
-        //this.
         dto.transfer(this.i, this.j); //=======================================
-    }
-
-   
+    } 
 }
 
 class MapMountain extends Map {
@@ -133,12 +130,23 @@ class DTO{      //Сделать Синглтоном
     moveRob(){
        // this.rob.posX = this.rob.pX;
        // this.rob.posY = this.rob.pY;
-
+        this.rotateRob();
         console.log("this.rob = "+ this.rob);
         this.rob.skin.style.left = this.rob.pX + "px";
-        this.rob.skin.style.top = this.rob.pY + "px";
+        this.rob.skin.style.top = this.rob.pY + "px"; 
         
     }
+
+    rotateRob(){        //======ToDo
+        if(this.rob.skin.style.left > this.rob.pX + "px"){
+            this.rob.skin.style.transform = "rotate(" + 270 + "deg)";
+            console.log("Поворот произошел?");
+        }else if(this.rob.skin.style.left < this.rob.pX + "px"){
+            this.rob.skin.style.transform = "rotate(" + 90 + "deg)";
+        }
+
+        
+    } 
 }
 
 dto = new DTO();
@@ -205,7 +213,7 @@ class feavyRobot extends Robot{
         this.HP = 100;
         this.damage = 25;
         this.def = 30;
-        this.sprite = "robot.png";
+        this.sprite = "robot1.png";
         this.pointAction = 10;
 
         this.posX = posX;
@@ -232,6 +240,7 @@ class wrapperRobot{             // Стоит ли так оставлять к�
         r.skin.style.height = 50 + "px";
         r.skin.style.position= "absolute";
         r.skin.style.backgroundImage = "url(" + r.sprite + ")";
+        r.skin.style.backgroundSize = "100% 100%";
 
         screen.appendChild(r.skin);
         console.log(r.stepWidth);
