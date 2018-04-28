@@ -162,15 +162,38 @@ class Robot{
 
         this.posX;
         this.posY;
-
         this.id = id;
-
 
         this.stepWidth = document.getElementsByClassName("tileCell")[0].clientWidth;        //Ширины и высота квадратика текстурки
         this.stepHeight = document.getElementsByClassName("tileCell")[0].clientHeight;
 
+        this.renderRobot();
+
         this.onclick = this.onclick.bind(this); // Правильно ли сделал?
     }
+
+
+
+    renderRobot(){
+        this.skin = document.createElement('DIV');
+        this.skin.className = 'robot';
+        
+        //container.appendChild(Map.skin);
+
+        this.skin.style.left = this.posX + "px";
+        this.skin.style.top = this.posY + "px";
+        this.skin.style.width = 50 + "px";
+        this.skin.style.height = 50 + "px";
+        this.skin.style.position= "absolute";
+        this.skin.style.backgroundImage = "url(" + this.sprite + ")";
+        this.skin.style.backgroundSize = "100% 100%";
+
+        screen.appendChild(this.skin);
+        //console.log(this.stepWidth);
+        //console.log(this.stepHeight);
+        this.skin.onclick = this.onclick;         //Стоит ли так оставлять?
+    }
+
 
 
     move(){
@@ -197,13 +220,6 @@ class Robot{
         }*/
         //this.skin.classList.remove("selected");
     }
-
-    saveRobot(rob){     //=================================ВОЗМОЖНО, НЕ ИСПОЛЬЗУЕТСЯ====================
-        let saveRob = rob;  //объект робот для передачи в метод движения по клику
-        console.log("saveRob: " + saveRob);
-    }
-
-
 }
 
 
@@ -228,7 +244,7 @@ class wrapperRobot{             // Стоит ли так оставлять к�
         this.ob = r;
     }
 
-    renderRobot(r){
+    /*renderRobot(r){
         r.skin = document.createElement('DIV');
         r.skin.className = 'robot';
         
@@ -246,7 +262,7 @@ class wrapperRobot{             // Стоит ли так оставлять к�
         console.log(r.stepWidth);
         console.log(r.stepHeight);
         r.skin.onclick = r.onclick;         //Стоит ли так оставлять?
-    }
+    }*/
 
     getRobot(){
         return this.ob;
@@ -264,9 +280,9 @@ class army{
     createArmy(){
         for(this.IdGenerator; this.IdGenerator < 3; this.IdGenerator++){     //Сделать более осмысленный способ задания кол-ва роботов
 
-            this.mas[this.IdGenerator] = new wrapperRobot(new feavyRobot(100, 100, this.IdGenerator));
+            this.mas[this.IdGenerator] = new feavyRobot(100, 100, this.IdGenerator);
             console.log("Проход " + this.IdGenerator);
-            console.log("Проход генератора " + this.mas[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
+            console.log("Проход генератора " + this.mas[this.IdGenerator].skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
             //this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
             //this.mas[this.IdGenerator]
 
