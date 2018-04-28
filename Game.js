@@ -1,6 +1,4 @@
 const screen = document.getElementById('scene');
-console.clear();
-console.log('update');
 
 
 class Map {
@@ -60,11 +58,11 @@ class MapPlain extends Map {
 
 class FillingMap {
     constructor() {
-        this.mas = [];
+        this.robotsArray = [];
     }
 
     addToArray(mapSection) {
-        this.mas.push(mapSection);
+        this.robotsArray.push(mapSection);
     }
 
     createElement(Map, container) {
@@ -87,16 +85,16 @@ class FillingMap {
             row.className = 'tilesRow';
             screen.appendChild(row);
 
-            this.mas[i] = [];
+            this.robotsArray[i] = [];
 
             for (let j = 0; j < 10; j++) {
                 let random = Math.random();
                 if (random > 0.9) {
-                    this.mas[i][j] = this.createElement(new MapMountain(i, j), row);
+                    this.robotsArray[i][j] = this.createElement(new MapMountain(i, j), row);
                 } else if (random < 0.1) {
-                    this.mas[i][j] = this.createElement(new MapForest(i, j), row);
+                    this.robotsArray[i][j] = this.createElement(new MapForest(i, j), row);
                 } else
-                    this.mas[i][j] = this.createElement(new MapPlain(i, j), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)
+                    this.robotsArray[i][j] = this.createElement(new MapPlain(i, j), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)
 
                 //console.log(random);
             }
@@ -106,13 +104,13 @@ class FillingMap {
 }
 
 
-const dto = new class DTO {      //Сделать Синглтоном // легко!
+const dto = new class DTO {      //Сделать Синглтоном // я сделал! сразу создаём экземпляр класса. (и в конце блока еще)
     constructor() {
         //this.ob;
         this.currentSelectedUnit; //id юнита
     }
 
-    transfer(I, J) {
+    transfer(i, j) {
         //console.log("Hi " + document.getElementsByClassName("tileCell")[0].clientWidth);
         //const widthScreen = document.getElementsByClassName('tileCell')[0].clientWidth;
         //const heightScreen = document.getElementsByClassName('tileCell')[0].clientHeight;
@@ -125,7 +123,9 @@ const dto = new class DTO {      //Сделать Синглтоном // лег
         //return ob
         //this.moveRob();
 
-        this.rob.moveTo(I, J);
+        // теперь мы просто будем менять поля i и j у робота и потом он сам себя пусть рендерит:
+
+        this.rob.moveTo(i, j);
         this.rob.render();
     }
 
@@ -207,7 +207,7 @@ class Robot {
 
     onclick() {
 
-        create.mas.forEach((el, i) => {
+        robotsArmy.robotsArray.forEach((el, i) => {
             console.log('Цикл ' + el);
             el.getRobot().skin.classList.remove('selected');
         });
@@ -223,12 +223,12 @@ class Robot {
          }*/
         //this.skin.classList.remove("selected");
     }
-
+/*
     saveRobot(rob) {     //=================================ВОЗМОЖНО, НЕ ИСПОЛЬЗУЕТСЯ====================
         let saveRob = rob;  //объект робот для передачи в метод движения по клику
         console.log('saveRob: ' + saveRob);
     }
-
+*/
     render() {
 
         const { width, height } = getMapTileSize();
@@ -325,22 +325,22 @@ class wrapperRobot {             // Стоит ли так оставлять к
 
 }
 
-class army {
+class Army { // классы мы именуем с большой буквы, а поля - с мелкой
     constructor() {
-        this.mas = [];    // TODO:
+        this.robotsArray = [];    // TODO:
         // ( ↑ ) Плохо называть массивы МАССИВ =. Вместо этого именовать так, что бы было понятно,
         // для чего создан этот массив. Например, если это массив роботов, то robots = [];
         this.IdGenerator = 0;
-        //console.log("Массив " + this.mas);
+        //console.log("Массив " + this.robotsArray);
     }
 
     createArmy() {
         for (this.IdGenerator; this.IdGenerator < 3; this.IdGenerator++) {     //Сделать более осмысленный способ задания кол-ва роботов
 
-            this.mas[this.IdGenerator] = new wrapperRobot(new feavyRobot(1, this.IdGenerator, this.IdGenerator));
-            this.mas[this.IdGenerator].getRobot().render();
+            this.robotsArray[this.IdGenerator] = new wrapperRobot(new feavyRobot(1, this.IdGenerator, this.IdGenerator));
+            this.robotsArray[this.IdGenerator].getRobot().render();
             console.log('Проход ' + this.IdGenerator);
-            console.log('Проход генератора ' + this.mas[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
+            console.log('Проход генератора ' + this.robotsArray[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
             //Слушай, ну, рендер я бы точно сделал в самом роботе. Но как служебный метод может пригодится.
 
             //this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
@@ -363,7 +363,7 @@ class army {
 
 // Если окно изменило размер - всё перерендерить:
 window.onresize = function () {
-    create.mas.forEach((el) => {
+    robotsArmy.robotsArray.forEach((el) => {
         el.getRobot().render();
     });
 }
@@ -375,8 +375,8 @@ m.generateMap();
 //r = new wrapperRobot(new feavyRobot(100, 100, 20));
 //r.renderRobot(new feavyRobot(100, 100, 20));
 
-create = new army();
-create.createArmy();
+robotsArmy = new Army();
+robotsArmy.createArmy();
 
 //r2 = new wrapperRobot();
 //r2.renderRobot(new feavyRobot(400, 200, 10));
