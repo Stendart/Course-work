@@ -139,13 +139,20 @@ class DTO{      //Сделать Синглтоном
 
     rotateRob(){        //======ToDo
         if(this.rob.skin.style.left > this.rob.pX + "px"){
-            this.rob.skin.style.transform = "rotate(" + 270 + "deg)";
+            this.rob.sprite = "robotLeft.png";
+            this.rob.initRob();
+            //this.rob.skin.style.transform = "rotate(" + 270 + "deg)";
             console.log("Поворот произошел?");
         }else if(this.rob.skin.style.left < this.rob.pX + "px"){
-            this.rob.skin.style.transform = "rotate(" + 90 + "deg)";
+            this.rob.sprite = "robotRight.png";
+            this.rob.initRob();
+        }else if(this.rob.skin.style.top > this.rob.pY + "px"){
+            this.rob.sprite = "robot1.png";
+            this.rob.initRob();
+        }else if(this.rob.skin.style.top < this.rob.pY + "px"){
+            this.rob.sprite = "robotForw.png";
+            this.rob.initRob();
         }
-
-        
     } 
 }
 
@@ -167,7 +174,7 @@ class Robot{
         this.stepWidth = document.getElementsByClassName("tileCell")[0].clientWidth;        //Ширины и высота квадратика текстурки
         this.stepHeight = document.getElementsByClassName("tileCell")[0].clientHeight;
 
-        this.renderRobot();
+        
 
         this.onclick = this.onclick.bind(this); // Правильно ли сделал?
     }
@@ -180,6 +187,21 @@ class Robot{
         
         //container.appendChild(Map.skin);
 
+        /*this.skin.style.left = this.posX + "px";
+        this.skin.style.top = this.posY + "px";
+        this.skin.style.width = 50 + "px";
+        this.skin.style.height = 50 + "px";
+        this.skin.style.position= "absolute";
+        this.skin.style.backgroundImage = "url(" + this.sprite + ")";
+        this.skin.style.backgroundSize = "100% 100%";*/
+        this.initRob();
+        screen.appendChild(this.skin);
+        console.log(this.stepWidth);
+        console.log(this.stepHeight);
+        this.skin.onclick = this.onclick;         //Стоит ли так оставлять?
+    }
+
+    initRob(){
         this.skin.style.left = this.posX + "px";
         this.skin.style.top = this.posY + "px";
         this.skin.style.width = 50 + "px";
@@ -187,14 +209,7 @@ class Robot{
         this.skin.style.position= "absolute";
         this.skin.style.backgroundImage = "url(" + this.sprite + ")";
         this.skin.style.backgroundSize = "100% 100%";
-
-        screen.appendChild(this.skin);
-        //console.log(this.stepWidth);
-        //console.log(this.stepHeight);
-        this.skin.onclick = this.onclick;         //Стоит ли так оставлять?
     }
-
-
 
     move(){
         this.posX +=this.stepWidth;
@@ -206,7 +221,7 @@ class Robot{
 
         create.mas.forEach((el,i)=>{
             console.log("Цикл " + el)
-            el.getRobot().skin.classList.remove("selected");
+            el.skin.classList.remove("selected");
         })
         console.log("This is a robot " + this.skin.classList );
         //this.move();        
@@ -234,6 +249,8 @@ class feavyRobot extends Robot{
 
         this.posX = posX;
         this.posY = posY;
+
+        this.renderRobot();
     }
 }
 
