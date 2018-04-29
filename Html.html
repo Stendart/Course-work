@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Программа</title>
-  <meta charset ="UTF-8">
-  <link rel="stylesheet" href="CSS.css" type="text/css"/>
+    <title>Программа</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="CSS.css" type="text/css"/>
 </head>
 <body>
 
- <div id = "scene" style = "width: 80%; height: 100%;
-    background-color: #ccc;
-    "></div>
- <script src="Game.js"></script>
+    <div id="uid">
+        <div id="unitsScreen">
+
+            <div class="unitCard">
+                <div class="unitImage"></div>
+                <div class="unitStats">
+                    <div class="unitHealth" value="90%" style="background: linear-gradient(90deg, #ff0000 90%, transparent 0%)"></div>
+                    <div class="unitStamina" value="50%" style="background: linear-gradient(90deg, #0000ff 50%, transparent 0%)"></div>>
+                </div>
+            </div>
+
+            <div class="unitCard">
+                <div class="unitImage"></div>
+                <div class="unitStats">
+                    <div class="unitHealth" value="60%" style="background: linear-gradient(90deg, #ff0000 60%, transparent 0%)"></div>
+                    <div class="unitStamina" value="20%" style="background: linear-gradient(90deg, #0000ff 20%, transparent 0%)"></div>>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div
+        id="scene"
+        style="width: 80%; height: 100%; background-color: #ccc;"
+    ></div>
+
+<script src="Game.js"></script>
 </body>
 </html>
