@@ -14,6 +14,15 @@ div {
 	height: 100%;
 }
 
+#display{
+	position: absolute; 
+	background: #aac; 
+	width: 20%; 
+	right: 0px; 
+	height: 100%; 
+	top: 0px; 
+}
+
 .tilesRow {
 	display: flex;
 	width: 100%;

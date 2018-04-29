@@ -1,6 +1,5 @@
 const screen = document.getElementById('scene');
 
-
 class Map {
     constructor(i,j) {
         this.protectionBonus;
@@ -28,11 +27,6 @@ class MapMountain extends Map {
         this.pointOnStep = 10;
         this.image = 'Mountain.jpg';
     }
-
-    /*onclick(){ !!!!!!!!!!!!!!
-        super.onclick();
-        console.log("This mountain" + " i: "+this.i + " j: "+this.j);
-    }*/
 }
 
 class MapForest extends Map {
@@ -74,7 +68,6 @@ class FillingMap {
     }
 
     generateMap() {
-        //const screen = document.getElementById("scene");
 
         for (let i = 0; i < 20; i++) {
             let row = document.createElement('DIV');
@@ -91,12 +84,9 @@ class FillingMap {
                 } else if(random < 0.1){
                     this.robotsArray[i][j] = this.createElement(new MapForest(i,j), row);
                 } else
-                    this.robotsArray[i][j] = this.createElement(new MapPlain(i,j), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)   
-
-                //console.log(random);
+                    this.robotsArray[i][j] = this.createElement(new MapPlain(i,j), row);
             }
         }
-        //console.log(this.mas)
     }
 }
 
@@ -109,20 +99,7 @@ const dto = new class DTO {      //Сделать Синглтоном
     }
 
     transfer(i, j){
-        //console.log("Hi " + document.getElementsByClassName("tileCell")[0].clientWidth);
-        //const widthScreen = document.getElementsByClassName("tileCell")[0].clientWidth;
-        //const heightScreen = document.getElementsByClassName("tileCell")[0].clientHeight;
-        //let i = I;
-        //let j = J;
-
-        
-        //this.rob.pX = widthScreen * j;    //получаем координаты нового нахождения робота
-        //this.rob.pY = heightScreen * i;   //умножая ширину/высоту клетки на её номер в строке/столбце ()
-        //return ob
-        //this.moveRob();
-
         this.rob.moveTo(i, j);
-        this.rob.render(); //????????????
     }
 
     collectRobotInfo(robot) {
@@ -130,33 +107,6 @@ const dto = new class DTO {      //Сделать Синглтоном
         console.log('ID= ' + this.rob.id);
     }
 
-    /*moveRob(){
-       // this.rob.posX = this.rob.pX;
-       // this.rob.posY = this.rob.pY;
-        this.rotateRob();
-        console.log("this.rob = "+ this.rob);
-        this.rob.skin.style.left = this.rob.pX + "px";
-        this.rob.skin.style.top = this.rob.pY + "px"; 
-        
-    }*/
-
-    rotateRob(){        //======ToDo
-        if(this.rob.skin.style.left > this.rob.pX + "px"){
-            this.rob.sprite = "robotLeft.png";
-            this.rob.initRob();
-            //this.rob.skin.style.transform = "rotate(" + 270 + "deg)";
-            console.log("Поворот произошел?");
-        }else if(this.rob.skin.style.left < this.rob.pX + "px"){
-            this.rob.sprite = "robotRight.png";
-            this.rob.initRob();
-        }else if(this.rob.skin.style.top > this.rob.pY + "px"){
-            this.rob.sprite = "robot1.png";
-            this.rob.initRob();
-        }else if(this.rob.skin.style.top < this.rob.pY + "px"){
-            this.rob.sprite = "robotForw.png";
-            this.rob.initRob();
-        }
-    } 
 }();
 
 //dto = new DTO();
@@ -178,9 +128,6 @@ class Robot {
         this.def;
         this.skin;
         this.pointAction;
-
-        //this.posX;
-        //this.posY;
         this.id = id; 
         
                 //РАЗОБРАТЬСЯ!!!
@@ -190,40 +137,16 @@ class Robot {
     }
 
 
-
-/*    renderRobot(){
-        this.skin = document.createElement('DIV');
-        this.skin.className = 'robot';
-        
-        //container.appendChild(Map.skin);
-
-        this.initRob();
-        screen.appendChild(this.skin);
-        console.log(this.stepWidth);
-        console.log(this.stepHeight);
-        this.skin.onclick = this.onclick;         //Стоит ли так оставлять?
-    }
-
-    initRob(){
-        this.skin.style.left = this.posX + "px";
-        this.skin.style.top = this.posY + "px";
-        this.skin.style.width = 50 + "px";
-        this.skin.style.height = 50 + "px";
-        this.skin.style.position= "absolute";
-        this.skin.style.backgroundImage = "url(" + this.sprite + ")";
-        this.skin.style.backgroundSize = "100% 100%";
-    }*/
-
-    /*move(){
-        this.posX +=this.stepWidth;
-        this.skin.style.left = this.posX + "px";
-    }*/
-
     moveTo(i, j) {
         const needsUpdate = this.i !==i || this.j !== j;
+        this.rotateRob(i, j);
         this.i = i;
         this.j = j;
-        if(needsUpdate) this.render();
+        if(needsUpdate) {
+
+            this.render();
+            
+        }
     }
 
 
@@ -234,16 +157,8 @@ class Robot {
             el.getRobot().skin.classList.remove('selected');   //|||||||||||||||||
         })
         console.log('This is a classList ' + this.skin.classList);
-        //this.move();        
-        //this.saveRobot(this);
         this.skin.classList.add('selected');
-       // this.skin.classList.remove("selected");
         dto.collectRobotInfo(this);
-
-       /* if(this.skin.selected == true){
-            console.log("Select!!!");
-        }*/
-        //this.skin.classList.remove("selected");
     }
 
     render() {
@@ -253,11 +168,36 @@ class Robot {
         this.skin.style.width = this.width + 'px';
         this.skin.style.height = this.height + 'px';
 
-        const borderSize = 4; // Разобраться |||||||||||||||||
+        const borderSize = 4; 
 
         this.skin.style.top = ((this.i) * (height) + (height - borderSize * 2) / 2 - this.height / 2) + 'px';
         this.skin.style.left = ((this.j) * (width) + (width - borderSize * 2) / 2 - this.width / 2) + 'px';
     }
+
+    rotateRob(i, j){        //======ToDo
+        if(this.j > j ){
+            this.sprite = "robotLeft.png";
+            this.skin.style.backgroundImage = 'url(' + this.sprite + ')';
+            console.log("this.skin.style.left = " + this.skin.style.left + ' j =' + j);
+
+        }else if(this.j < j ){
+            this.sprite = "robotRight.png";
+            this.skin.style.backgroundImage = 'url(' + this.sprite + ')';
+            console.log("this.skin.style.left = " + this.skin.style.left + ' j =' + j);
+
+        }else if(this.i > i ){
+            this.sprite = "robot1.png";
+            this.skin.style.backgroundImage = 'url(' + this.sprite + ')';
+            //this.rob.render();
+            console.log("this.skin.style.top = " + this.skin.style.top + 'i = ' + i);
+
+        }else if(this.i < i ){
+            this.sprite = "robotForw.png";
+            this.skin.style.backgroundImage = 'url(' + this.sprite + ')';
+            //this.rob.render();
+            console.log("this.skin.style.top = " + this.skin.style.top + 'i = ' + i);
+        }
+    } 
 }
 
 
@@ -276,7 +216,6 @@ class feavyRobot extends Robot {
         this.i= posI;
         this.j = posJ;
 
-        //this.renderRobot();
     }
 }
 
@@ -286,26 +225,6 @@ class wrapperRobot {             // Стоит ли так оставлять к
         this.setupRobotSkin(r);
         this.ob = r;
     }
-
-    /*renderRobot(r){
-        r.skin = document.createElement('DIV');
-        r.skin.className = 'robot';
-        
-        //container.appendChild(Map.skin);
-
-        r.skin.style.left = r.posX + "px";
-        r.skin.style.top = r.posY + "px";
-        r.skin.style.width = 50 + "px";
-        r.skin.style.height = 50 + "px";
-        r.skin.style.position= "absolute";
-        r.skin.style.backgroundImage = "url(" + r.sprite + ")";
-        r.skin.style.backgroundSize = "100% 100%";
-
-        screen.appendChild(r.skin);
-        console.log(r.stepWidth);
-        console.log(r.stepHeight);
-        r.skin.onclick = r.onclick;         //Стоит ли так оставлять?
-    }*/
 
     setupRobotSkin(r) {
         r.skin = document.createElement('DIV');
@@ -332,29 +251,54 @@ class Army {
         //console.log("Массив " + this.mas);
     }
 
-    createArmy() {
-        for(this.IdGenerator; this.IdGenerator < 3; this.IdGenerator++){     //Сделать более осмысленный способ задания кол-ва роботов
+    createArmy(countRob) {
+        for(this.IdGenerator; this.IdGenerator < countRob; this.IdGenerator++){     //Сделать более осмысленный способ задания кол-ва роботов
 
             this.robotsArray[this.IdGenerator] = new wrapperRobot(new feavyRobot(1, this.IdGenerator, this.IdGenerator));
             this.robotsArray[this.IdGenerator].getRobot().render();
             console.log("Проход " + this.IdGenerator);
-            console.log("Проход генератора " + this.robotsArray[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
-            //this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
-            //this.mas[this.IdGenerator]
+            console.log("Проход генератора " + this.robotsArray[this.IdGenerator].getRobot().skin);
 
         }
     }
-
-   /* onclick(){
-        console.log("New click!!!");
-    }*/
-       /* console.log("Test in method");
-        this.mas.forEach((el, i) =>{
-            this.mas[i] = new wrapperRobot(new feavyRobot(100, 100, this.IdGenerator));
-            this.IdGenerator++;
-            console.log("Проход " + i);
-        })*/
 }
+
+class Display {
+    constructor() {
+        this.disp = document.getElementById('display');
+        this.disp.style.display = 'flex';
+        this.disp.style.justifyContent = 'space-around';
+        this.arrayIcon = [];
+    }
+
+    createIcon() {
+        this.btn = document.createElement('input')
+        //this.btn.id = 'b1'
+        this.btn.type = 'button'
+        this.btn.style.backgroundImage = 'url(' + 'robotForw.png' + ')';
+        this.btn.style.backgroundSize = 'contain';
+        this.btn.style.width = 70 + 'px';
+        this.btn.style.height = 70 + 'px';
+        //this.btn.value = 'T'
+        this.btn.setAttribute('onclick', 'obj.HandleClick1();')
+        this.disp.appendChild(this.btn);
+        return this.btn;
+    }
+
+    createArrayIcon(count) {
+        for(let i = 0; i<count; i++) {
+            this.arrayIcon[i] = this.createIcon();
+        }
+    }
+
+    
+
+
+}
+
+
+
+
 
 //Если окно изменит размеры - всё перерендерить
 window.onresize = function () {
@@ -367,17 +311,11 @@ window.onresize = function () {
 m = new FillingMap();
 m.generateMap();
 
-//r = new wrapperRobot(new feavyRobot(100, 100, 20));
-//r.renderRobot(new feavyRobot(100, 100, 20));
+disp = new Display();
+disp.createArrayIcon(5);
 
+
+const countRob = 3;
 robotsArmy = new Army();
-robotsArmy.createArmy();
+robotsArmy.createArmy(countRob);
 
-//r2 = new wrapperRobot();
-//r2.renderRobot(new feavyRobot(400, 200, 10));
-
-
-
-
-
-//const widthScreen = document.getElementsByClassName("map")[0].clientWidth;
