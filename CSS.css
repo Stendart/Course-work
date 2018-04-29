@@ -79,12 +79,13 @@ div {
     transform: translate(-50%, -40%);
 }
 
+
 .unitHealth {
-    background: linear-gradient(90deg, #ff0000 35%, transparent 0%);  /* ПОМЕНЯТЬ ИЗ JS: вместо 35% подставить сколько жизней у юнита */
+   /* background: linear-gradient(90deg, #ff0000 35%, transparent 0%);*/  /* ПОМЕНЯТЬ ИЗ JS: вместо 35% подставить сколько жизней у юнита */
 }
 
 .unitStamina {
-    background: linear-gradient(90deg, #0000ff 35%, transparent 0%);  /* ПОМЕНЯТЬ ИЗ JS: вместо 35% подставить сколько хода у юнита */
+   /* background: linear-gradient(90deg, #0000ff 35%, transparent 0%); */ /* ПОМЕНЯТЬ ИЗ JS: вместо 35% подставить сколько хода у юнита */
 }
 
 /* общее описание для */
@@ -114,7 +115,7 @@ div {
 
 
 .unitImage {
-    background: url(robot1.png); /* ПОМЕНЯТЬ ИЗ JS: Подставлять картинку из класса*/
+    /*background-image: url(robot1.png);*/ /* ПОМЕНЯТЬ ИЗ JS: Подставлять картинку из класса*/
     width: 40%;
     height: 100%;
     border: 0;

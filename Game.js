@@ -383,3 +383,55 @@ robotsArmy.createArmy();
 
 
 //const widthScreen = document.getElementsByClassName("map")[0].clientWidth;
+
+
+function generateUnitCardInUID ( unitImageUrl, unitHealthValue, unitStaminaValue ) {
+    /*
+    Нужно получить вот это на выходе:
+            <div class="unitCard">
+                <div class="unitImage"></div>
+                <div class="unitStats">
+                    <div class="unitHealth" value="90%" style="background: linear-gradient(90deg, #ff0000 90%, transparent 0%)"></div>
+                    <div class="unitStamina" value="50%" style="background: linear-gradient(90deg, #0000ff 50%, transparent 0%)"></div>
+                </div>
+            </div>
+
+         и вставить это в <div id="unitsScreen">
+     */
+
+    //нам надо создавать дивы и давать им всем имя класса. Пусть это функция делает!
+    const newDiv = ( className ) => {
+        let element = document.createElement('DIV');
+        element.className = className;
+        return element;
+    };
+
+    //Сама карточка:
+    const unitCard = newDiv('unitCard');
+    document.getElementById('unitsScreen').appendChild(unitCard);
+
+    //Внутренности карточки - картинка и статы:
+    const unitImage = newDiv('unitImage');
+    unitImage.style.backgroundImage = `url(${unitImageUrl})`;
+    unitCard.appendChild(unitImage);
+
+    const unitStats = newDiv('unitStats');
+    unitCard.appendChild(unitStats);
+
+    //внутренности unitStats - линия жизней и линия ходов:
+    const unitHealth = newDiv('unitHealth');
+    unitHealth.setAttribute('value', `${unitHealthValue}%`);
+    unitHealth.style.background = `linear-gradient(90deg, #ff0000 ${unitHealthValue}%, transparent 0%)`;
+    unitStats.appendChild(unitHealth);
+
+    const unitStamina = newDiv('unitStamina');
+    unitStamina.setAttribute('value', `${unitStaminaValue}%`);
+    unitStamina.style.background = `linear-gradient(90deg, #0000ff ${unitStaminaValue}%, transparent 0%)`;
+    unitStats.appendChild(unitStamina);
+
+}
+
+//Пример использования:
+generateUnitCardInUID( 'robot1.png', 50, 25 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
+generateUnitCardInUID( 'robot1.png', 95, 60 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
+generateUnitCardInUID( 'robot1.png', 30, 10 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
