@@ -1,4 +1,4 @@
-const screen = document.getElementById("scene");
+const screen = document.getElementById('scene');
 
 
 class Map {
@@ -10,13 +10,13 @@ class Map {
         this.i = i;
         this.j = j;
 
-        this.onclick = this.onclick.bind(this);
+        this.mapTileOnClick = this.mapTileOnClick.bind(this);
     }
 
-    onclick(e){
+    mapTileOnClick(e){
         console.clear()
         //console.log("Click", e);
-        console.log(this.i + " j: "+ this.j);
+        console.log('Map class click ' + this.i + " j: "+ this.j);
         dto.transfer(this.i, this.j); //=======================================
     } 
 }
@@ -26,13 +26,13 @@ class MapMountain extends Map {
         super(i, j);
         this.protectionBonus = 20;
         this.pointOnStep = 10;
-        this.image = "Mountain.jpg";
+        this.image = 'Mountain.jpg';
     }
 
-    onclick(){
+    /*onclick(){ !!!!!!!!!!!!!!
         super.onclick();
         console.log("This mountain" + " i: "+this.i + " j: "+this.j);
-    }
+    }*/
 }
 
 class MapForest extends Map {
@@ -40,7 +40,7 @@ class MapForest extends Map {
         super(i, j);
         this.protectionBonus = 5;
         this.pointOnStep = 5;
-        this.image = "Forest.jpg";
+        this.image = 'Forest.jpg';
     }
 }
 
@@ -49,26 +49,26 @@ class MapPlain extends Map {
         super(i, j);
         this.protectionBonus = 0;
         this.pointOnStep = 1;
-        this.image = "Plain.jpg";
+        this.image = 'Plain.jpg';
     }
 }
 
 class FillingMap {
     constructor() {
-        this.mas = [];
+        this.robotsArray = [];
     }
 
     addToArray(mapSection) {
-        this.mas.push(mapSection);
+        this.robotsArray.push(mapSection);
     }
 
     createElement(Map, container) {
         Map.skin = document.createElement('DIV');
         Map.skin.className = 'tileCell';
-        Map.skin.style.backgroundImage = "url(" + Map.image + ")";
+        Map.skin.style.backgroundImage = 'url(' + Map.image + ')';
         container.appendChild(Map.skin);
 
-        Map.skin.onclick = Map.onclick;
+        Map.skin.onclick = Map.mapTileOnClick;
 
         return Map;
     }
@@ -82,16 +82,16 @@ class FillingMap {
             row.className = 'tilesRow';
             screen.appendChild(row);
 
-            this.mas[i] = [];
+            this.robotsArray[i] = [];
 
             for (let j = 0; j < 10; j++) {
                 let random = Math.random();
-                if(random > 0.9){
-                    this.mas[i][j] = this.createElement(new MapMountain(i, j), row);
-                }else if(random < 0.1){
-                    this.mas[i][j] = this.createElement(new MapForest(i,j), row);
-                }else
-                this.mas[i][j] = this.createElement(new MapPlain(i,j), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)   
+                if (random > 0.9){
+                    this.robotsArray[i][j] = this.createElement(new MapMountain(i, j), row);
+                } else if(random < 0.1){
+                    this.robotsArray[i][j] = this.createElement(new MapForest(i,j), row);
+                } else
+                    this.robotsArray[i][j] = this.createElement(new MapPlain(i,j), row);        //Стоит ли так оставлять? Или массив вынести отдельным методом (как?)   
 
                 //console.log(random);
             }
@@ -102,32 +102,35 @@ class FillingMap {
 
 
 
-class DTO{      //Сделать Синглтоном
-    constructor(){
+const dto = new class DTO {      //Сделать Синглтоном
+    constructor() {
         //this.ob;
         this.currentSelectedUnit; //id юнита
     }
 
-     transfer(I, J){
+    transfer(i, j){
         //console.log("Hi " + document.getElementsByClassName("tileCell")[0].clientWidth);
-        const widthScreen = document.getElementsByClassName("tileCell")[0].clientWidth;
-        const heightScreen = document.getElementsByClassName("tileCell")[0].clientHeight;
+        //const widthScreen = document.getElementsByClassName("tileCell")[0].clientWidth;
+        //const heightScreen = document.getElementsByClassName("tileCell")[0].clientHeight;
         //let i = I;
         //let j = J;
 
         
-        this.rob.pX = widthScreen * J;    //получаем координаты нового нахождения робота
-        this.rob.pY = heightScreen * I;   //умножая ширину/высоту клетки на её номер в строке/столбце ()
+        //this.rob.pX = widthScreen * j;    //получаем координаты нового нахождения робота
+        //this.rob.pY = heightScreen * i;   //умножая ширину/высоту клетки на её номер в строке/столбце ()
         //return ob
-        this.moveRob();
+        //this.moveRob();
+
+        this.rob.moveTo(i, j);
+        this.rob.render(); //????????????
     }
 
-    collectRobotInfo(robot){
+    collectRobotInfo(robot) {
         this.rob = robot;
-        console.log("ID= " + this.rob.id);
+        console.log('ID= ' + this.rob.id);
     }
 
-    moveRob(){
+    /*moveRob(){
        // this.rob.posX = this.rob.pX;
        // this.rob.posY = this.rob.pY;
         this.rotateRob();
@@ -135,7 +138,7 @@ class DTO{      //Сделать Синглтоном
         this.rob.skin.style.left = this.rob.pX + "px";
         this.rob.skin.style.top = this.rob.pY + "px"; 
         
-    }
+    }*/
 
     rotateRob(){        //======ToDo
         if(this.rob.skin.style.left > this.rob.pX + "px"){
@@ -154,12 +157,21 @@ class DTO{      //Сделать Синглтоном
             this.rob.initRob();
         }
     } 
+}();
+
+//dto = new DTO();
+
+
+function getMapTileSize() {
+    const width = document.getElementsByClassName('tileCell')[0].offsetWidth;
+    const height = document.getElementsByClassName('tileCell')[0].offsetHeight;
+    return {
+        width: width,
+        height: height, 
+    }
 }
 
-dto = new DTO();
-
-
-class Robot{
+class Robot {
     constructor(id){
         this.HP;
         this.damage;
@@ -167,33 +179,24 @@ class Robot{
         this.skin;
         this.pointAction;
 
-        this.posX;
-        this.posY;
-        this.id = id;
-
-        this.stepWidth = document.getElementsByClassName("tileCell")[0].clientWidth;        //Ширины и высота квадратика текстурки
-        this.stepHeight = document.getElementsByClassName("tileCell")[0].clientHeight;
-
+        //this.posX;
+        //this.posY;
+        this.id = id; 
         
-
+                //РАЗОБРАТЬСЯ!!!
         this.onclick = this.onclick.bind(this); // Правильно ли сделал?
+        this.moveTo = this.moveTo.bind(this);
+        this.render = this.render.bind(this); 
     }
 
 
 
-    renderRobot(){
+/*    renderRobot(){
         this.skin = document.createElement('DIV');
         this.skin.className = 'robot';
         
         //container.appendChild(Map.skin);
 
-        /*this.skin.style.left = this.posX + "px";
-        this.skin.style.top = this.posY + "px";
-        this.skin.style.width = 50 + "px";
-        this.skin.style.height = 50 + "px";
-        this.skin.style.position= "absolute";
-        this.skin.style.backgroundImage = "url(" + this.sprite + ")";
-        this.skin.style.backgroundSize = "100% 100%";*/
         this.initRob();
         screen.appendChild(this.skin);
         console.log(this.stepWidth);
@@ -209,24 +212,31 @@ class Robot{
         this.skin.style.position= "absolute";
         this.skin.style.backgroundImage = "url(" + this.sprite + ")";
         this.skin.style.backgroundSize = "100% 100%";
-    }
+    }*/
 
-    move(){
+    /*move(){
         this.posX +=this.stepWidth;
         this.skin.style.left = this.posX + "px";
+    }*/
+
+    moveTo(i, j) {
+        const needsUpdate = this.i !==i || this.j !== j;
+        this.i = i;
+        this.j = j;
+        if(needsUpdate) this.render();
     }
 
 
-    onclick(){
+    onclick() {
 
-        create.mas.forEach((el,i)=>{
-            console.log("Цикл " + el)
-            el.skin.classList.remove("selected");
+        robotsArmy.robotsArray.forEach((el, i)=> {
+            console.log('Цикл ' + el);
+            el.getRobot().skin.classList.remove('selected');   //|||||||||||||||||
         })
-        console.log("This is a robot " + this.skin.classList );
+        console.log('This is a classList ' + this.skin.classList);
         //this.move();        
         //this.saveRobot(this);
-        this.skin.classList.add("selected");
+        this.skin.classList.add('selected');
        // this.skin.classList.remove("selected");
         dto.collectRobotInfo(this);
 
@@ -235,29 +245,45 @@ class Robot{
         }*/
         //this.skin.classList.remove("selected");
     }
-}
 
+    render() {
+        const { width, height } = getMapTileSize();
+        this.width = this.height = height;
 
-class feavyRobot extends Robot{
-    constructor(posX, posY, id){
-        super(id);
-        this.HP = 100;
-        this.damage = 25;
-        this.def = 30;
-        this.sprite = "robot1.png";
-        this.pointAction = 10;
+        this.skin.style.width = this.width + 'px';
+        this.skin.style.height = this.height + 'px';
 
-        this.posX = posX;
-        this.posY = posY;
+        const borderSize = 4; // Разобраться |||||||||||||||||
 
-        this.renderRobot();
+        this.skin.style.top = ((this.i) * (height) + (height - borderSize * 2) / 2 - this.height / 2) + 'px';
+        this.skin.style.left = ((this.j) * (width) + (width - borderSize * 2) / 2 - this.width / 2) + 'px';
     }
 }
 
 
-class wrapperRobot{             // Стоит ли так оставлять класс? Или метод генерации лучше в Робота перенести?
-    constructor(r){
-        this.renderRobot(r);
+class feavyRobot extends Robot {
+    constructor(posI, posJ, id) {
+        super(id);
+        this.HP = 100;
+        this.damage = 25;
+        this.def = 30;
+        this.sprite = 'robot1.png';
+        this.pointAction = 10;
+
+        this.width = 50;
+        this.height = 50;
+
+        this.i= posI;
+        this.j = posJ;
+
+        //this.renderRobot();
+    }
+}
+
+
+class wrapperRobot {             // Стоит ли так оставлять класс? Или метод генерации лучше в Робота перенести?
+    constructor(r) {
+        this.setupRobotSkin(r);
         this.ob = r;
     }
 
@@ -281,40 +307,60 @@ class wrapperRobot{             // Стоит ли так оставлять к�
         r.skin.onclick = r.onclick;         //Стоит ли так оставлять?
     }*/
 
-    getRobot(){
+    setupRobotSkin(r) {
+        r.skin = document.createElement('DIV');
+        r.skin.className = 'robot';
+
+        r.skin.style.width = r.width + 'px';
+        r.skin.style.height = r.height + 'px';
+        r.skin.style.backgroundImage = 'url(' + r.sprite + ')';
+        screen.appendChild(r.skin);
+
+        r.skin.onclick = r.onclick;
+    }
+
+    getRobot() {
         return this.ob;
     }
 
 }
 
-class army{
+class Army {
     constructor(){
-        this.mas = [];    //ToDo
+        this.robotsArray = [];    //ToDo
         this.IdGenerator = 0;
         //console.log("Массив " + this.mas);
     }
 
-    createArmy(){
+    createArmy() {
         for(this.IdGenerator; this.IdGenerator < 3; this.IdGenerator++){     //Сделать более осмысленный способ задания кол-ва роботов
 
-            this.mas[this.IdGenerator] = new feavyRobot(100, 100, this.IdGenerator);
+            this.robotsArray[this.IdGenerator] = new wrapperRobot(new feavyRobot(1, this.IdGenerator, this.IdGenerator));
+            this.robotsArray[this.IdGenerator].getRobot().render();
             console.log("Проход " + this.IdGenerator);
-            console.log("Проход генератора " + this.mas[this.IdGenerator].skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
+            console.log("Проход генератора " + this.robotsArray[this.IdGenerator].getRobot().skin);     //Стоит так делать?(Засовывать геттер, что бы достучатсья до робота. Или лучше просто рендер робота не выносить во wrapper и сделать прост метод в классе Robot?)
             //this.mas[this.IdGenerator].getRobot().skin.onclick+=this.onclick();
             //this.mas[this.IdGenerator]
 
         }
     }
 
-    onclick(){
+   /* onclick(){
         console.log("New click!!!");
-    }
+    }*/
        /* console.log("Test in method");
         this.mas.forEach((el, i) =>{
             this.mas[i] = new wrapperRobot(new feavyRobot(100, 100, this.IdGenerator));
             this.IdGenerator++;
             console.log("Проход " + i);
         })*/
+}
+
+//Если окно изменит размеры - всё перерендерить
+window.onresize = function () {
+    robotsArmy.robotsArray.forEach((el) => {
+        el.getRobot().render();
+    });
 }
 
 
@@ -324,8 +370,8 @@ m.generateMap();
 //r = new wrapperRobot(new feavyRobot(100, 100, 20));
 //r.renderRobot(new feavyRobot(100, 100, 20));
 
-create = new army();
-create.createArmy();
+robotsArmy = new Army();
+robotsArmy.createArmy();
 
 //r2 = new wrapperRobot();
 //r2.renderRobot(new feavyRobot(400, 200, 10));
