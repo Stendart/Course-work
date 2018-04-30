@@ -16,8 +16,17 @@ class Map {
         console.clear()
         //console.log("Click", e);
         console.log('Map class click ' + this.i + " j: "+ this.j);
-        dto.transfer(this.i, this.j); //=======================================
+        try {
+            dto.transfer(this.i, this.j, this.pointOnStep); //=======================================
+        }
+        catch(e) {
+            alert('Сначала выберите робота');
+        }
     } 
+
+    calcPointOnStep() {
+
+    }
 }
 
 class MapMountain extends Map {
@@ -98,8 +107,18 @@ const dto = new class DTO {      //Сделать Синглтоном
         this.currentSelectedUnit; //id юнита
     }
 
-    transfer(i, j){
-        this.rob.moveTo(i, j);
+    transfer(i, j, pointOnStep){
+        if(this.pointOnStep(pointOnStep)){
+            this.rob.percentTired -= pointOnStep;
+            this.rob.moveTo(i, j);
+        }
+    }
+
+    pointOnStep(pointOnStep) {
+        if(pointOnStep > this.rob.percentTired) {
+            console.log("you can't going");
+            return false
+        } return true
     }
 
     collectRobotInfo(robot) {
@@ -144,25 +163,20 @@ class Robot {
         this.i = i;
         this.j = j;
         if(needsUpdate) {
-
-            this.render();
-            
+            this.render();   
+            changeStamina(this.elDispl.unitStamina, this.percentTired);    
         }
     }
 
     onclick() {
 
         robotsArmy.robotsArray.forEach((el, i)=> {
-            console.log('Цикл ' + el);
+            //console.log('Цикл ' + el);
             el.getRobot().skin.classList.remove('selected');   //|||||||||||||||||     JSON.stringify(this.elDispl)
         })
         //console.log('This is a classList ' + this.skin.classList);
         console.log('This is a display ' + this.elDispl.unitHealth);
 
-        changeStamina(this.elDispl.unitStamina, this.percentTired);
-
-        //this.elDispl.unitStamina.setAttribute('value', 10 + '%');
-        //this.elDispl.unitStamina.style.background = 'linear-gradient(90deg, #0000ff,' + 10 + '%, transparent 0%)';
         this.skin.classList.add('selected');
         dto.collectRobotInfo(this);
     }
@@ -179,8 +193,6 @@ class Robot {
         this.skin.style.top = ((this.i) * (height) + (height - borderSize * 2) / 2 - this.height / 2) + 'px';
         this.skin.style.left = ((this.j) * (width) + (width - borderSize * 2) / 2 - this.width / 2) + 'px';
     }
-
-
 
     rotateRob(i, j){        //======ToDo
         if(this.j > j ){
@@ -206,6 +218,10 @@ class Robot {
             console.log("this.skin.style.top = " + this.skin.style.top + 'i = ' + i);
         }
     } 
+
+    checkStep() {
+
+    }
 }
 
 
@@ -216,7 +232,7 @@ class feavyRobot extends Robot {
         this.damage = 25;
         this.def = 30;
         this.sprite = 'robot1.png';
-        this.percentTired = 10;
+        this.percentTired = 100;
 
         this.width = 50;
         this.height = 50;
@@ -292,6 +308,8 @@ class Display {
         return arr
     }
 }
+
+
 
 
 
