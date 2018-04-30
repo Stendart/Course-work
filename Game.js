@@ -127,7 +127,7 @@ class Robot {
         this.damage;
         this.def;
         this.skin;
-        this.pointAction;
+        this.percentTired;
         this.id = id; 
 
         this.elDispl = elDispl; //Информация на дисплей о роботе
@@ -159,8 +159,10 @@ class Robot {
         //console.log('This is a classList ' + this.skin.classList);
         console.log('This is a display ' + this.elDispl.unitHealth);
 
-        this.elDispl.unitStamina.setAttribute('value', 10 + '%');
-        this.elDispl.unitStamina.style.background = 'linear-gradient(90deg, #0000ff,' + 10 + '%, transparent 0%)';
+        changeStamina(this.elDispl.unitStamina, this.percentTired);
+
+        //this.elDispl.unitStamina.setAttribute('value', 10 + '%');
+        //this.elDispl.unitStamina.style.background = 'linear-gradient(90deg, #0000ff,' + 10 + '%, transparent 0%)';
         this.skin.classList.add('selected');
         dto.collectRobotInfo(this);
     }
@@ -214,7 +216,7 @@ class feavyRobot extends Robot {
         this.damage = 25;
         this.def = 30;
         this.sprite = 'robot1.png';
-        this.pointAction = 10;
+        this.percentTired = 10;
 
         this.width = 50;
         this.height = 50;
@@ -376,6 +378,16 @@ function generateUnitCardInUID ( unitImageUrl, unitHealthValue, unitStaminaValue
         unitStamina: unitStamina,
     }
 
+}
+
+function changeStamina(unitStamina, unitStaminaValue) {
+    unitStamina.setAttribute('value', unitStaminaValue + '%');
+    unitStamina.style.background = 'linear-gradient(90deg, #0000ff,' + unitStaminaValue + '%, transparent 0%)';
+}
+
+function changeHealth(unitHealth, unitHealthValue) {
+    unitHealth.setAttribute('value', unitHealthValue + '%');
+    unitHealth.style.background = 'linear-gradient(90deg, #ff0000' + unitHealthValue + '%, transparent 0%)';
 }
 
 //generateUnitCardInUID( 'robot1.png', 50, 25 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
