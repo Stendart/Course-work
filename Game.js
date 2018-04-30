@@ -122,20 +122,21 @@ function getMapTileSize() {
 }
 
 class Robot {
-    constructor(id){
+    constructor(id, elDispl){
         this.HP;
         this.damage;
         this.def;
         this.skin;
         this.pointAction;
         this.id = id; 
+
+        this.elDispl = elDispl; //Информация на дисплей о роботе
         
                 //РАЗОБРАТЬСЯ!!!
         this.onclick = this.onclick.bind(this); // Правильно ли сделал?
         this.moveTo = this.moveTo.bind(this);
         this.render = this.render.bind(this); 
     }
-
 
     moveTo(i, j) {
         const needsUpdate = this.i !==i || this.j !== j;
@@ -149,14 +150,17 @@ class Robot {
         }
     }
 
-
     onclick() {
 
         robotsArmy.robotsArray.forEach((el, i)=> {
             console.log('Цикл ' + el);
-            el.getRobot().skin.classList.remove('selected');   //|||||||||||||||||
+            el.getRobot().skin.classList.remove('selected');   //|||||||||||||||||     JSON.stringify(this.elDispl)
         })
-        console.log('This is a classList ' + this.skin.classList);
+        //console.log('This is a classList ' + this.skin.classList);
+        console.log('This is a display ' + this.elDispl.unitHealth);
+
+        this.elDispl.unitStamina.setAttribute('value', 10 + '%');
+        this.elDispl.unitStamina.style.background = 'linear-gradient(90deg, #0000ff,' + 10 + '%, transparent 0%)';
         this.skin.classList.add('selected');
         dto.collectRobotInfo(this);
     }
@@ -173,6 +177,8 @@ class Robot {
         this.skin.style.top = ((this.i) * (height) + (height - borderSize * 2) / 2 - this.height / 2) + 'px';
         this.skin.style.left = ((this.j) * (width) + (width - borderSize * 2) / 2 - this.width / 2) + 'px';
     }
+
+
 
     rotateRob(i, j){        //======ToDo
         if(this.j > j ){
@@ -202,8 +208,8 @@ class Robot {
 
 
 class feavyRobot extends Robot {
-    constructor(posI, posJ, id) {
-        super(id);
+    constructor(posI, posJ, id, elDispl) {
+        super(id, elDispl);
         this.HP = 100;
         this.damage = 25;
         this.def = 30;
@@ -215,7 +221,6 @@ class feavyRobot extends Robot {
 
         this.i= posI;
         this.j = posJ;
-
     }
 }
 
@@ -248,13 +253,14 @@ class Army {
     constructor(){
         this.robotsArray = [];    //ToDo
         this.IdGenerator = 0;
+        this.disp = new Display();
         //console.log("Массив " + this.mas);
     }
 
     createArmy(countRob) {
         for(this.IdGenerator; this.IdGenerator < countRob; this.IdGenerator++){     //Сделать более осмысленный способ задания кол-ва роботов
 
-            this.robotsArray[this.IdGenerator] = new wrapperRobot(new feavyRobot(1, this.IdGenerator, this.IdGenerator));
+            this.robotsArray[this.IdGenerator] = new wrapperRobot(new feavyRobot(1, this.IdGenerator, this.IdGenerator, this.disp.arrayIcon[this.IdGenerator]));   //1 - координата появления робота
             this.robotsArray[this.IdGenerator].getRobot().render();
             console.log("Проход " + this.IdGenerator);
             console.log("Проход генератора " + this.robotsArray[this.IdGenerator].getRobot().skin);
@@ -265,35 +271,24 @@ class Army {
 
 class Display {
     constructor() {
-        this.disp = document.getElementById('display');
-        this.disp.style.display = 'flex';
-        this.disp.style.justifyContent = 'space-around';
         this.arrayIcon = [];
     }
 
-    createIcon() {
-        this.btn = document.createElement('input')
-        //this.btn.id = 'b1'
-        this.btn.type = 'button'
-        this.btn.style.backgroundImage = 'url(' + 'robotForw.png' + ')';
-        this.btn.style.backgroundSize = 'contain';
-        this.btn.style.width = 70 + 'px';
-        this.btn.style.height = 70 + 'px';
-        //this.btn.value = 'T'
-        this.btn.setAttribute('onclick', 'obj.HandleClick1();')
-        this.disp.appendChild(this.btn);
-        return this.btn;
-    }
-
     createArrayIcon(count) {
-        for(let i = 0; i<count; i++) {
-            this.arrayIcon[i] = this.createIcon();
+        for(let i = 0; i < count; i++) {
+           this.arrayIcon[i] = this.fillingArray();
         }
     }
 
-    
-
-
+    fillingArray() {
+        const {unitCard, unitImage, unitHealth, unitStamina} = generateUnitCardInUID('robot1.png', 50, 25);
+        let arr = unitCard;
+        //array = unitCard;
+        arr.unitImage = unitImage; 
+        arr.unitHealth = unitHealth; 
+        arr.unitStamina = unitStamina;
+        return arr
+    }
 }
 
 
@@ -311,11 +306,87 @@ window.onresize = function () {
 m = new FillingMap();
 m.generateMap();
 
-disp = new Display();
-disp.createArrayIcon(5);
-
 
 const countRob = 3;
 robotsArmy = new Army();
+robotsArmy.disp.createArrayIcon(countRob);
 robotsArmy.createArmy(countRob);
 
+
+
+//disp = new Display();
+
+
+//console.log("Dictionary: " + generateUnitCardInUID( 'robot1.png', 50, 25 ).unitImage);
+//console.log("Dictionary: " + generateUnitCardInUID( 'robot1.png', 50, 25 ).unitHealth);
+//console.log("Dictionary: " + generateUnitCardInUID( 'robot1.png', 50, 25 ).unitStamina);
+
+
+
+//=====================================================================================================================
+
+function generateUnitCardInUID ( unitImageUrl, unitHealthValue, unitStaminaValue ) {
+    /*
+    Нужно получить вот это на выходе:
+            <div class="unitCard">
+                <div class="unitImage"></div>
+                <div class="unitStats">
+                    <div class="unitHealth" value="90%" style="background: linear-gradient(90deg, #ff0000 90%, transparent 0%)"></div>
+                    <div class="unitStamina" value="50%" style="background: linear-gradient(90deg, #0000ff 50%, transparent 0%)"></div>
+                </div>
+            </div>
+
+         и вставить это в <div id="unitsScreen">
+     */
+
+    //нам надо создавать дивы и давать им всем имя класса. Пусть это функция делает!
+    const newDiv = ( className ) => {
+        let element = document.createElement('DIV');
+        element.className = className;
+        return element;
+    };
+
+    //Сама карточка:
+    const unitCard = newDiv('unitCard');
+    document.getElementById('unitsScreen').appendChild(unitCard);
+
+    //Внутренности карточки - картинка и статы:
+    const unitImage = newDiv('unitImage');
+    unitImage.style.backgroundImage = 'url(' + unitImageUrl + ')';
+    unitCard.appendChild(unitImage);
+
+    const unitStats = newDiv('unitStats');
+    unitCard.appendChild(unitStats);
+
+    //внутренности unitStats - линия жизней и линия ходов:
+    const unitHealth = newDiv('unitHealth');
+    unitHealth.setAttribute('value', unitHealthValue + '%');
+    unitHealth.style.background = 'linear-gradient(90deg, #ff0000' + unitHealthValue + '%, transparent 0%)';
+    unitStats.appendChild(unitHealth);
+
+    const unitStamina = newDiv('unitStamina');
+    unitStamina.setAttribute('value', unitStaminaValue + '%');
+    unitStamina.style.background = 'linear-gradient(90deg, #0000ff,' + unitStaminaValue + '%, transparent 0%)';
+    unitStats.appendChild(unitStamina);
+
+    return{
+        unitCard: unitCard,
+        unitImage: unitImage,
+        unitHealth: unitHealth,
+        unitStamina: unitStamina,
+    }
+
+}
+
+//generateUnitCardInUID( 'robot1.png', 50, 25 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
+//generateUnitCardInUID( 'robot1.png', 95, 60 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
+//generateUnitCardInUID( 'robot1.png', 30, 10 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
+
+
+
+/*return {
+        width: width,
+        height: height, 
+    }
+const { width, height } = getMapTileSize();
+    this.width = this.height = height;*/
