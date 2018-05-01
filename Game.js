@@ -20,7 +20,7 @@ class Map {
             dto.transfer(this.i, this.j, this.pointOnStep); //=======================================
         }
         catch(e) {
-            alert('Сначала выберите робота');
+            console.log('Конец карты');
         }
     } 
 
@@ -109,7 +109,9 @@ const dto = new class DTO {      //Сделать Синглтоном
     }
 
     transfer(i, j, pointOnStep){
-        if(this.pointOnStep(pointOnStep)){
+
+        if(this.rob !== undefined){
+            if(this.pointOnStep(pointOnStep)){
             this.rob.percentTired -= pointOnStep;
 
             if( Math.abs(this.rob.i - i) <= 1 && Math.abs(this.rob.j - j) <= 1){
@@ -117,9 +119,11 @@ const dto = new class DTO {      //Сделать Синглтоном
                 console.log("Abs i " + Math.abs(this.rob.i - i));
                 console.log("Abs j " + Math.abs(this.rob.j - j));
             }
-           this.deleateIlluminationArea();
-           this.illuminationArea();
-        }
+            this.deleateIlluminationArea();
+            this.illuminationArea();
+            }
+        }else alert("С начала выберите робота");
+        
     }
 
     pointOnStep(pointOnStep) {
@@ -137,6 +141,12 @@ const dto = new class DTO {      //Сделать Синглтоном
     }
 
     illuminationArea() {
+
+        /*if(isNaN(m.mountainsArray[this.rob.i+1][this.rob.j] || m.mountainsArray[this.rob.i-1][this.rob.j] || 
+            m.mountainsArray[this.rob.i][this.rob.j+1] || m.mountainsArray[this.rob.i][this.rob.j-1] )){
+            console.log("Nan");
+        }*/
+
         //el.skin.classList.remove('selected');
         if(this.rob.percentTired > m.mountainsArray[this.rob.i+1][this.rob.j].pointOnStep) {
             m.mountainsArray[this.rob.i+1][this.rob.j].skin.classList.add('infoArea');
