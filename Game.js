@@ -58,11 +58,11 @@ class MapPlain extends Map {
 
 class FillingMap {
     constructor() {
-        this.robotsArray = [];
+        this.mountainsArray = [];
     }
 
     addToArray(mapSection) {
-        this.robotsArray.push(mapSection);
+        this.mountainsArray.push(mapSection);
     }
 
     createElement(Map, container) {
@@ -84,16 +84,16 @@ class FillingMap {
             row.className = 'tilesRow';
             screen.appendChild(row);
 
-            this.robotsArray[i] = [];
+            this.mountainsArray[i] = [];
 
             for (let j = 0; j < 10; j++) {
                 let random = Math.random();
                 if (random > 0.9){
-                    this.robotsArray[i][j] = this.createElement(new MapMountain(i, j), row);
+                    this.mountainsArray[i][j] = this.createElement(new MapMountain(i, j), row);
                 } else if(random < 0.1){
-                    this.robotsArray[i][j] = this.createElement(new MapForest(i,j), row);
+                    this.mountainsArray[i][j] = this.createElement(new MapForest(i,j), row);
                 } else
-                    this.robotsArray[i][j] = this.createElement(new MapPlain(i,j), row);
+                    this.mountainsArray[i][j] = this.createElement(new MapPlain(i,j), row);
             }
         }
     }
@@ -104,32 +104,77 @@ class FillingMap {
 const dto = new class DTO {      //Сделать Синглтоном
     constructor() {
         //this.ob;
-        this.currentSelectedUnit; //id юнита
+        //this.currentSelectedUnit; //id юнита
+
     }
 
     transfer(i, j, pointOnStep){
         if(this.pointOnStep(pointOnStep)){
             this.rob.percentTired -= pointOnStep;
-            this.rob.moveTo(i, j);
+
+            if( Math.abs(this.rob.i - i) <= 1 && Math.abs(this.rob.j - j) <= 1){
+                this.rob.moveTo(i, j);
+                console.log("Abs i " + Math.abs(this.rob.i - i));
+                console.log("Abs j " + Math.abs(this.rob.j - j));
+            }
+           this.deleateIlluminationArea();
+           this.illuminationArea();
         }
     }
 
     pointOnStep(pointOnStep) {
         if(pointOnStep > this.rob.percentTired) {
             console.log("you can't going");
+            alert('Очки движения закончились!');
             return false
         } return true
     }
 
     collectRobotInfo(robot) {
         this.rob = robot;
+        this.illuminationArea();
         console.log('ID= ' + this.rob.id);
     }
 
+    illuminationArea() {
+        //el.skin.classList.remove('selected');
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i+1][this.rob.j].pointOnStep) {
+            m.mountainsArray[this.rob.i+1][this.rob.j].skin.classList.add('infoArea');
+        }
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i-1][this.rob.j].pointOnStep) {
+            m.mountainsArray[this.rob.i-1][this.rob.j].skin.classList.add('infoArea');
+        }
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i][this.rob.j+1].pointOnStep) {
+            m.mountainsArray[this.rob.i][this.rob.j+1].skin.classList.add('infoArea');
+        }
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i][this.rob.j-1].pointOnStep) {
+            m.mountainsArray[this.rob.i][this.rob.j-1].skin.classList.add('infoArea');
+        }
+
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i+1][this.rob.j+1].pointOnStep) {
+            m.mountainsArray[this.rob.i+1][this.rob.j+1].skin.classList.add('infoArea');
+        }
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i-1][this.rob.j-1].pointOnStep) {
+            m.mountainsArray[this.rob.i-1][this.rob.j-1].skin.classList.add('infoArea');
+        }
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i-1][this.rob.j+1].pointOnStep) {
+            m.mountainsArray[this.rob.i-1][this.rob.j+1].skin.classList.add('infoArea');
+        }
+        if(this.rob.percentTired > m.mountainsArray[this.rob.i+1][this.rob.j-1].pointOnStep) {
+            m.mountainsArray[this.rob.i+1][this.rob.j-1].skin.classList.add('infoArea');
+        }
+    }
+
+    deleateIlluminationArea() {
+         m.mountainsArray.forEach((el, i)=> {
+           
+            el.forEach((el, i)=> {
+                el.skin.classList.remove('infoArea');
+            })
+        })
+    }
+
 }();
-
-//dto = new DTO();
-
 
 function getMapTileSize() {
     const width = document.getElementsByClassName('tileCell')[0].offsetWidth;
@@ -139,6 +184,8 @@ function getMapTileSize() {
         height: height, 
     }
 }
+
+
 
 class Robot {
     constructor(id, elDispl){
@@ -299,7 +346,7 @@ class Display {
     }
 
     fillingArray() {
-        const {unitCard, unitImage, unitHealth, unitStamina} = generateUnitCardInUID('robot1.png', 50, 25);
+        const {unitCard, unitImage, unitHealth, unitStamina} = generateUnitCardInUID('robot1.png', 100, 100);
         let arr = unitCard;
         //array = unitCard;
         arr.unitImage = unitImage; 
@@ -308,11 +355,6 @@ class Display {
         return arr
     }
 }
-
-
-
-
-
 
 
 //Если окно изменит размеры - всё перерендерить
@@ -331,17 +373,6 @@ const countRob = 3;
 robotsArmy = new Army();
 robotsArmy.disp.createArrayIcon(countRob);
 robotsArmy.createArmy(countRob);
-
-
-
-//disp = new Display();
-
-
-//console.log("Dictionary: " + generateUnitCardInUID( 'robot1.png', 50, 25 ).unitImage);
-//console.log("Dictionary: " + generateUnitCardInUID( 'robot1.png', 50, 25 ).unitHealth);
-//console.log("Dictionary: " + generateUnitCardInUID( 'robot1.png', 50, 25 ).unitStamina);
-
-
 
 //=====================================================================================================================
 
@@ -381,7 +412,7 @@ function generateUnitCardInUID ( unitImageUrl, unitHealthValue, unitStaminaValue
     //внутренности unitStats - линия жизней и линия ходов:
     const unitHealth = newDiv('unitHealth');
     unitHealth.setAttribute('value', unitHealthValue + '%');
-    unitHealth.style.background = 'linear-gradient(90deg, #ff0000' + unitHealthValue + '%, transparent 0%)';
+    unitHealth.style.background = 'linear-gradient(90deg, #ff0000,' + unitHealthValue + '%, transparent 0%)';
     unitStats.appendChild(unitHealth);
 
     const unitStamina = newDiv('unitStamina');
@@ -407,16 +438,3 @@ function changeHealth(unitHealth, unitHealthValue) {
     unitHealth.setAttribute('value', unitHealthValue + '%');
     unitHealth.style.background = 'linear-gradient(90deg, #ff0000' + unitHealthValue + '%, transparent 0%)';
 }
-
-//generateUnitCardInUID( 'robot1.png', 50, 25 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
-//generateUnitCardInUID( 'robot1.png', 95, 60 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
-//generateUnitCardInUID( 'robot1.png', 30, 10 ); //1 - картинка юнита 2 - сколько ХП (процетов, без знака %), 3 - запас хода (процетов, без знака %)
-
-
-
-/*return {
-        width: width,
-        height: height, 
-    }
-const { width, height } = getMapTileSize();
-    this.width = this.height = height;*/
